@@ -16,6 +16,7 @@
 <meta name="twitter:image" content="https://tres65-inmobiliaria.github.io/AnalisisComparativo-Julio2026/share-thumbnail.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
   :root {
     --teal-deep: #1a5c5a;
@@ -245,6 +246,60 @@
   #mobile-overlay .mo-confirm { font-size: 0.72rem; color: rgba(255,255,255,0.4); max-width: 300px; margin: 0 auto 28px; font-style: italic; line-height: 1.6; }
   .mo-btn { background: var(--teal-bright); color: #fff; border: none; padding: 14px 36px; border-radius: 50px; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: background .2s, transform .15s; display: inline-block; }
   .mo-btn:hover { background: #23988a; transform: translateY(-2px); }
+
+  /*  PRINT BUTTON  */
+  .print-btn {
+    position: fixed; bottom: 28px; right: 28px; z-index: 500;
+    display: flex; align-items: center; gap: 8px;
+    background: var(--teal-deep); color: #fff; border: none;
+    padding: 13px 22px; border-radius: 50px;
+    font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.3px;
+    cursor: pointer; box-shadow: 0 6px 24px rgba(26,92,90,0.35);
+    transition: background .2s, transform .15s;
+  }
+  .print-btn:hover { background: var(--teal-mid); transform: translateY(-2px); }
+  .print-btn svg { width: 17px; height: 17px; stroke: #fff; }
+
+  /*  PRINT-ONLY LABELS FOR TABS  */
+  .tab-print-label { display: none; }
+
+  /*  PRINT / PDF STYLES  */
+  @media print {
+    @page { size: A4 landscape; margin: 12mm; }
+
+    .no-print, #mobile-overlay, .table-scroll-hint, .tabs-nav, .print-btn { display: none !important; }
+
+    * { box-shadow: none !important; transition: none !important; animation: none !important; }
+
+    .reveal { opacity: 1 !important; transform: none !important; }
+
+    body { background: #fff; font-size: 11.5px; }
+
+    .p-card:hover { transform: none; border-color: transparent; }
+    .p-card.top-pick { border-color: var(--teal-mid); }
+    .p-card, .chart-box, .a-box, .v-card { border: 1px solid var(--gray-light); }
+    .chart-box, .a-box, .v-card { break-inside: avoid; page-break-inside: avoid; }
+    .p-card-head, .p-price-row, .p-stats, .p-desc, .p-tags, .flag-box, .p-scores {
+      break-inside: avoid; page-break-inside: avoid;
+    }
+
+    .tab-pane { display: block !important; margin-bottom: 22px; }
+    .tab-pane + .tab-pane { border-top: 2px dashed var(--gray-light); padding-top: 18px; }
+    .tab-print-label {
+      display: block; font-family: 'Raleway', sans-serif; font-size: 0.95rem; font-weight: 700;
+      color: var(--teal-deep); margin-bottom: 12px;
+    }
+
+    .table-scroll-container { overflow: visible !important; }
+    .sticky-col { position: static !important; }
+    .compare-table thead { display: table-header-group; }
+    .compare-table tbody tr { break-inside: avoid; page-break-inside: avoid; }
+
+    .header, .market-banner, .footer, .compare-table thead tr, .p-price-row {
+      -webkit-print-color-adjust: exact; print-color-adjust: exact; color-adjust: exact;
+    }
+    .header, .market-banner, .footer { page-break-inside: avoid; }
+  }
 </style>
 </head>
 <body>
@@ -267,6 +322,12 @@
   <p class="mo-confirm">Al continuar confirmas que eres el destinatario autorizado de este análisis.</p>
   <button class="mo-btn" onclick="closeMobileOverlay()">Acepto y accedo al reporte →</button>
 </div>
+
+<!-- PRINT BUTTON -->
+<button class="print-btn no-print" onclick="window.print()">
+  <i data-lucide="printer"></i>
+  Imprimir / Guardar PDF
+</button>
 
 <!-- HEADER -->
 <header class="header">
@@ -559,6 +620,7 @@
     </div>
 
     <div class="tab-pane active" id="tab-fin">
+      <h3 class="tab-print-label">$ Financiero</h3>
       <div class="analysis-grid">
         <div class="a-box">
           <h4>› Dónde rinde más cada peso</h4>
@@ -581,6 +643,7 @@
     </div>
 
     <div class="tab-pane" id="tab-vida">
+      <h3 class="tab-print-label">◈ Vida en pareja</h3>
       <div class="analysis-grid">
         <div class="a-box">
           <h4>› Cómo se vive cada una, en pareja</h4>
@@ -603,6 +666,7 @@
     </div>
 
     <div class="tab-pane" id="tab-riesgo">
+      <h3 class="tab-print-label">⚠ Riesgo de cierre</h3>
       <div class="analysis-grid">
         <div class="a-box">
           <h4>› Lo que hay que confirmar antes de firmar algo</h4>
@@ -678,6 +742,8 @@
 </footer>
 
 <script>
+  lucide.createIcons();
+
   function closeMobileOverlay() {
     document.getElementById('mobile-overlay').style.display = 'none';
     sessionStorage.setItem('mo_dismissed', '1');
