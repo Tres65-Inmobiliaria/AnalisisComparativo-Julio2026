@@ -258,51 +258,324 @@
     transition: background .2s, transform .15s;
   }
   .print-btn:hover { background: var(--teal-mid); transform: translateY(-2px); }
-  .print-btn svg { width: 17px; height: 17px; stroke: #fff; }
+  .print-btn svg { width: 8.5px; height: 8.5px; stroke: #fff; }
 
-  /*  PRINT-ONLY LABELS FOR TABS  */
-  .tab-print-label { display: none; }
+  /*  DEDICATED PRINT REPORT (hidden on screen, only shown when printing)  */
+  #print-report { display: none; }
 
-  /*  PRINT / PDF STYLES  */
   @media print {
-    @page { size: A4 landscape; margin: 12mm; }
+    @page { size: A4 portrait; margin: 12mm; }
 
-    .no-print, #mobile-overlay, .table-scroll-hint, .tabs-nav, .print-btn { display: none !important; }
+    body > *:not(#print-report) { display: none !important; }
+    #print-report { display: block !important; font-size: 11px; color: var(--dark); }
 
-    * { box-shadow: none !important; transition: none !important; animation: none !important; }
+    .pp-page {
+      page-break-after: always;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .pp-page:last-child { page-break-after: auto; }
 
-    .reveal { opacity: 1 !important; transform: none !important; }
-
-    body { background: #fff; font-size: 11.5px; }
-
-    .p-card:hover { transform: none; border-color: transparent; }
-    .p-card.top-pick { border-color: var(--teal-mid); }
-    .p-card, .chart-box, .a-box, .v-card { border: 1px solid var(--gray-light); }
-    .chart-box, .a-box, .v-card { break-inside: avoid; page-break-inside: avoid; }
-    .p-card-head, .p-price-row, .p-stats, .p-desc, .p-tags, .flag-box, .p-scores {
-      break-inside: avoid; page-break-inside: avoid;
+    .pp-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-bottom: 8px; border-bottom: 1px solid var(--gray-light); margin-bottom: 14px;
+    }
+    .pp-header img { height: 32px; width: auto; }
+    .pp-header .pp-tag {
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--teal-bright);
     }
 
-    .tab-pane { display: block !important; margin-bottom: 22px; }
-    .tab-pane + .tab-pane { border-top: 2px dashed var(--gray-light); padding-top: 18px; }
-    .tab-print-label {
-      display: block; font-family: 'Raleway', sans-serif; font-size: 0.95rem; font-weight: 700;
-      color: var(--teal-deep); margin-bottom: 12px;
-    }
+    .pp-title { font-family: 'Raleway', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--teal-deep); margin-bottom: 3px; }
+    .pp-subtitle { font-size: 0.8rem; color: var(--gray); margin-bottom: 14px; }
 
-    .table-scroll-container { overflow: visible !important; }
-    .sticky-col { position: static !important; }
-    .compare-table thead { display: table-header-group; }
-    .compare-table tbody tr { break-inside: avoid; page-break-inside: avoid; }
+    .pp-intro h2 { font-family: 'Raleway', sans-serif; font-size: 1rem; font-weight: 700; color: var(--teal-deep); margin: 12px 0 6px; }
+    .pp-intro p { font-size: 0.8rem; line-height: 1.6; color: var(--dark); margin-bottom: 8px; }
 
-    .header, .market-banner, .footer, .compare-table thead tr, .p-price-row {
-      -webkit-print-color-adjust: exact; print-color-adjust: exact; color-adjust: exact;
+    .pp-client-grid {
+      display: grid; grid-template-columns: repeat(2,1fr); gap: 12px;
+      background: var(--gold-light); border-left: 3px solid var(--gold); border-radius: 8px;
+      padding: 12px 16px; margin: 10px 0;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
     }
-    .header, .market-banner, .footer { page-break-inside: avoid; }
+    .pp-client-grid div strong { display: block; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; color: #8a6b1a; margin-bottom: 2px; }
+    .pp-client-grid div span { font-size: 0.8rem; color: var(--dark); }
+
+    .pp-market-grid {
+      display: grid; grid-template-columns: repeat(2,1fr); gap: 12px;
+      background: linear-gradient(135deg, var(--teal-deep), var(--teal-mid)); border-radius: 10px;
+      padding: 14px 18px; margin-top: 10px;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .pp-market-grid div { text-align: center; }
+    .pp-market-grid .val { font-family: 'Raleway', sans-serif; font-size: 1.05rem; font-weight: 800; color: #fff; }
+    .pp-market-grid .lbl { font-size: 0.58rem; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+    .pp-id-badge { font-size: 0.6rem; font-weight: 700; letter-spacing: 1.5px; color: var(--teal-bright); text-transform: uppercase; margin-bottom: 3px; }
+    .pp-property-name { font-family: 'Raleway', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+    .pp-property-zone { font-size: 0.8rem; color: var(--gray); margin-bottom: 10px; }
+
+    .pp-price-row {
+      display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+      background: linear-gradient(to right, var(--teal-light), #fff);
+      padding: 10px 16px; border-radius: 8px; margin-bottom: 10px;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .pp-price-row .price { font-family: 'Raleway', sans-serif; font-size: 1.35rem; font-weight: 800; color: var(--teal-deep); }
+    .pp-price-row .cur { font-size: 0.72rem; font-weight: 600; color: var(--teal-mid); }
+    .pp-price-row .m2 { margin-left: auto; font-size: 0.72rem; color: var(--gray); }
+
+    .pp-stats-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--gray-light);
+      margin-bottom: 10px; border-radius: 8px; overflow: hidden;
+    }
+    .pp-stats-grid div { background: #fff; padding: 7px 12px; }
+    .pp-stats-grid .lbl { font-size: 0.58rem; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; }
+    .pp-stats-grid .val { font-size: 0.8rem; font-weight: 600; color: var(--dark); margin-top: 1px; }
+
+    .pp-desc { font-size: 0.78rem; line-height: 1.55; color: var(--gray); margin-bottom: 10px; }
+    .pp-desc strong { color: var(--dark); }
+
+    .pp-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+    .pp-tag { font-size: 0.62rem; font-weight: 600; padding: 3px 9px; border-radius: 20px; background: var(--teal-light); color: var(--teal-deep); }
+
+    .pp-box {
+      padding: 9px 14px; border-radius: 8px; margin-bottom: 10px;
+      background: #fbeeee; border-left: 3px solid #c97070;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .pp-box.ok { background: var(--teal-light); border-left-color: var(--teal-bright); }
+    .pp-box .pp-box-lbl { font-size: 0.6rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #a34848; margin-bottom: 3px; }
+    .pp-box.ok .pp-box-lbl { color: var(--teal-deep); }
+    .pp-box .pp-box-txt { font-size: 0.74rem; color: var(--gray); line-height: 1.5; }
+
+    .pp-scores-lbl { font-size: 0.6rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
+    .pp-score-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+    .pp-score-row .name { font-size: 0.72rem; width: 105px; flex-shrink: 0; }
+    .pp-score-row .bg { flex: 1; height: 5px; background: var(--gray-light); border-radius: 3px; overflow: hidden; }
+    .pp-score-row .fill {
+      height: 100%; border-radius: 3px; background: linear-gradient(to right, var(--teal-mid), var(--teal-bright));
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .pp-score-row .num { font-size: 0.72rem; font-weight: 700; color: var(--teal-deep); width: 26px; text-align: right; }
+
+    .pp-verdict {
+      background: #fff; border: 1px solid var(--gray-light); border-top: 3px solid var(--teal-bright);
+      border-radius: 8px; padding: 12px 16px; margin-top: 10px;
+    }
+    .pp-verdict.winner { border-top-color: var(--gold); }
+    .pp-verdict-title { font-family: 'Raleway', sans-serif; font-size: 0.88rem; font-weight: 700; color: var(--dark); margin-bottom: 5px; }
+    .pp-verdict p { font-size: 0.76rem; color: var(--gray); line-height: 1.5; }
+
+    .pp-footer {
+      margin-top: 10px; padding-top: 6px; border-top: 1px solid var(--gray-light);
+      display: flex; justify-content: space-between; font-size: 0.58rem; color: var(--gray);
+    }
   }
 </style>
 </head>
 <body>
+
+<!-- DEDICATED PRINT / PDF REPORT (hidden on screen, shown only when printing) -->
+<div id="print-report">
+
+  <!-- PAGE 1: INTRO -->
+  <section class="pp-page pp-intro">
+    <div class="pp-header">
+      <img src="LOGO_INMOBILIARIA_3.png" alt="TRES65 Inmobiliaria">
+      <span class="pp-tag">Documento Confidencial</span>
+    </div>
+    <div class="pp-title">Análisis Comparativo de Propiedades</div>
+    <div class="pp-subtitle">Zona Norte de Mérida · Julio 2026</div>
+
+    <h2>¿Qué se está buscando?</h2>
+    <p>Gabriela Mattei y Kevin Nyssen buscan su primera casa para vivir juntos en pareja, con financiamiento de recurso propio. Definieron la zona norte de Mérida como objetivo tras descartar la zona Centro. En 2 días recorrieron 15 opciones; estas son las 3 finalistas, ordenadas de la que mejor resuelve su búsqueda a la que más preguntas deja abiertas.</p>
+
+    <div class="pp-client-grid">
+      <div><strong>Clientes</strong><span>Gabriela Mattei &amp; Kevin Nyssen</span></div>
+      <div><strong>Perfil</strong><span>Pareja · Compra para vivir juntos</span></div>
+      <div><strong>Zona objetivo</strong><span>Norte de Mérida (tras descartar Centro)</span></div>
+      <div><strong>Financiamiento</strong><span>Recurso propio</span></div>
+    </div>
+
+    <h2>Contexto de mercado</h2>
+    <div class="pp-market-grid">
+      <div><div class="val">$23.8K–31.3K</div><div class="lbl">MXN/m² entre las 3 finalistas</div></div>
+      <div><div class="val">20%</div><div class="lbl">Enganche estándar de la zona</div></div>
+      <div><div class="val">Recurso propio</div><div class="lbl">Forma de pago de los clientes</div></div>
+      <div><div class="val">↑ Alta demanda</div><div class="lbl">Zona norte según los 3 listados</div></div>
+    </div>
+  </section>
+
+  <!-- PAGE 2: WINNER — CHOLUL TIKI TIKI -->
+  <section class="pp-page pp-property">
+    <div class="pp-header">
+      <img src="LOGO_INMOBILIARIA_3.png" alt="TRES65 Inmobiliaria">
+      <span class="pp-tag">★ Opción 1 de 3 · Ganadora</span>
+    </div>
+    <div class="pp-id-badge">EB-QE4250</div>
+    <div class="pp-property-name">Casa Cholul "Tiki Tiki"</div>
+    <div class="pp-property-zone">22 Cholul, Mérida</div>
+
+    <div class="pp-price-row">
+      <span class="price">$5,790,000</span><span class="cur">MXN</span>
+      <span class="m2">$23.8K/m² construido</span>
+    </div>
+
+    <div class="pp-stats-grid">
+      <div><div class="lbl">Recámaras</div><div class="val">3 (baño propio c/u)</div></div>
+      <div><div class="lbl">Baños</div><div class="val">3 + medio</div></div>
+      <div><div class="lbl">Construcción</div><div class="val">243.05 m²</div></div>
+      <div><div class="lbl">Terreno</div><div class="val">354.18 m²</div></div>
+      <div><div class="lbl">Niveles</div><div class="val">1 planta</div></div>
+      <div><div class="lbl">Mantenimiento</div><div class="val">$0 por escrito</div></div>
+    </div>
+
+    <p class="pp-desc">El mayor terreno y construcción de las tres, de una sola planta — sin escaleras que complicar más adelante — y casa propia, no fraccionamiento. Cada recámara con baño propio. El listado confirma por escrito <strong>cero cuota de mantenimiento</strong> y entrega inmediata. Es la opción con menos preguntas abiertas: lo que dice el papel es, hasta ahora, lo que hay.</p>
+
+    <div class="pp-tags">
+      <span class="pp-tag">◉ Alberca canal de nado</span>
+      <span class="pp-tag">◈ Mayor terreno</span>
+      <span class="pp-tag">◦ Una sola planta</span>
+      <span class="pp-tag">✦ Sin mantenimiento</span>
+      <span class="pp-tag">◈ Estacionamiento 2 autos</span>
+      <span class="pp-tag">✦ Entrega inmediata</span>
+    </div>
+
+    <div class="pp-box ok">
+      <div class="pp-box-lbl">✓ Punto a favor</div>
+      <div class="pp-box-txt">Acepta crédito bancario y recurso propio, terreno propio sin reglamento de condominio, y es la única de las tres sin ningún dato pendiente por confirmar en el listado.</div>
+    </div>
+
+    <div class="pp-scores-lbl">Evaluación estratégica</div>
+    <div class="pp-score-row"><span class="name">Espacio</span><div class="bg"><div class="fill" style="width:95%"></div></div><span class="num">9.5</span></div>
+    <div class="pp-score-row"><span class="name">Valor/m²</span><div class="bg"><div class="fill" style="width:85%"></div></div><span class="num">8.5</span></div>
+    <div class="pp-score-row"><span class="name">Vida en pareja</span><div class="bg"><div class="fill" style="width:85%"></div></div><span class="num">8.5</span></div>
+    <div class="pp-score-row"><span class="name">Riesgo de cierre</span><div class="bg"><div class="fill" style="width:90%"></div></div><span class="num">9.0</span></div>
+
+    <div class="pp-verdict winner">
+      <div class="pp-verdict-title">★ Cholul Tiki Tiki — la que menos preguntas deja abiertas</div>
+      <p>Mayor terreno, mayor construcción, precio/m² más bajo de las tres, una sola planta y sin mantenimiento por escrito. No es automáticamente "la mejor" para esta pareja — eso depende de qué tanto pesan diseño y ubicación exacta para ellos — pero es la que llega con menos verificaciones pendientes.</p>
+    </div>
+
+    <div class="pp-footer">
+      <span>TRES65 Inmobiliaria · Damara Traconis Corres · damara@tres65inmobiliaria.com</span>
+      <span>2 / 4</span>
+    </div>
+  </section>
+
+  <!-- PAGE 3: 2ND OPTION — TEMOZÓN NORTE -->
+  <section class="pp-page pp-property">
+    <div class="pp-header">
+      <img src="LOGO_INMOBILIARIA_3.png" alt="TRES65 Inmobiliaria">
+      <span class="pp-tag">Opción 2 de 3</span>
+    </div>
+    <div class="pp-id-badge">EB-UV3920</div>
+    <div class="pp-property-name">Town House Temozón Norte</div>
+    <div class="pp-property-zone">Temozón Norte, Mérida</div>
+
+    <div class="pp-price-row">
+      <span class="price">$4,950,000</span><span class="cur">MXN</span>
+      <span class="m2">$25.3K/m² construido</span>
+    </div>
+
+    <div class="pp-stats-grid">
+      <div><div class="lbl">Recámaras</div><div class="val">2 (amplias)</div></div>
+      <div><div class="lbl">Baños</div><div class="val">2 + medio</div></div>
+      <div><div class="lbl">Construcción</div><div class="val">195.71 m²</div></div>
+      <div><div class="lbl">Terreno</div><div class="val">170.37 m²</div></div>
+      <div><div class="lbl">Niveles</div><div class="val">2 (doble altura)</div></div>
+      <div><div class="lbl">Mantenimiento</div><div class="val">No aplica</div></div>
+    </div>
+
+    <p class="pp-desc">Las recámaras más generosas de las tres y sala-comedor a doble altura. Trae <strong>11 paneles solares</strong> ya instalados — gasto eléctrico resuelto desde el primer mes. Son solo 2 recámaras: sobra espacio para vivir en pareja hoy, pero es la única de las tres sin margen para un cuarto adicional sin construir. Vendedor motivado por comprar una casa de 1 planta para su nuevo bebé — real palanca de negociación.</p>
+
+    <div class="pp-tags">
+      <span class="pp-tag">◈ 11 paneles solares</span>
+      <span class="pp-tag">◉ Alberca</span>
+      <span class="pp-tag">◦ Mascotas permitidas</span>
+      <span class="pp-tag">✦ Entrega inmediata</span>
+      <span class="pp-tag">◈ Doble altura</span>
+    </div>
+
+    <div class="pp-box">
+      <div class="pp-box-lbl">⚠ Verificar antes de cerrar</div>
+      <div class="pp-box-txt">La casa tiene una hipoteca vigente con el banco (~$2,660,000, pagos al día). El vendedor asegura que no representa problema para el cierre — pero esto se confirma con el notario y la institución bancaria, nunca solo de palabra.</div>
+    </div>
+
+    <div class="pp-scores-lbl">Evaluación estratégica</div>
+    <div class="pp-score-row"><span class="name">Espacio</span><div class="bg"><div class="fill" style="width:75%"></div></div><span class="num">7.5</span></div>
+    <div class="pp-score-row"><span class="name">Valor/m²</span><div class="bg"><div class="fill" style="width:90%"></div></div><span class="num">9.0</span></div>
+    <div class="pp-score-row"><span class="name">Vida en pareja</span><div class="bg"><div class="fill" style="width:85%"></div></div><span class="num">8.5</span></div>
+    <div class="pp-score-row"><span class="name">Riesgo de cierre</span><div class="bg"><div class="fill" style="width:65%"></div></div><span class="num">6.5</span></div>
+
+    <div class="pp-verdict">
+      <div class="pp-verdict-title">Temozón Norte — la mejor ecuación si son solo ustedes dos</div>
+      <p>Recámaras amplias, paneles solares y un vendedor con motivo real para negociar. El límite es estructural: son 2 recámaras, no 3, y eso no se resuelve negociando precio. <strong>Pendiente: certificado de libertad de gravamen antes de cualquier apartado.</strong></p>
+    </div>
+
+    <div class="pp-footer">
+      <span>TRES65 Inmobiliaria · Damara Traconis Corres · damara@tres65inmobiliaria.com</span>
+      <span>3 / 4</span>
+    </div>
+  </section>
+
+  <!-- PAGE 4: 3RD OPTION — BENITO JUÁREZ NTE -->
+  <section class="pp-page pp-property">
+    <div class="pp-header">
+      <img src="LOGO_INMOBILIARIA_3.png" alt="TRES65 Inmobiliaria">
+      <span class="pp-tag">Opción 3 de 3</span>
+    </div>
+    <div class="pp-id-badge">EB-VG7914</div>
+    <div class="pp-property-name">Town House Benito Juárez Nte</div>
+    <div class="pp-property-zone">Residencial Las Águilas, Mérida</div>
+
+    <div class="pp-price-row">
+      <span class="price">$5,695,000</span><span class="cur">MXN</span>
+      <span class="m2">$31.3K/m² construido</span>
+    </div>
+
+    <div class="pp-stats-grid">
+      <div><div class="lbl">Recámaras</div><div class="val">3</div></div>
+      <div><div class="lbl">Baños</div><div class="val">3 + medio</div></div>
+      <div><div class="lbl">Construcción</div><div class="val">182 m²</div></div>
+      <div><div class="lbl">Terreno</div><div class="val">~152 m² aprox.</div></div>
+      <div><div class="lbl">Niveles</div><div class="val">2</div></div>
+      <div><div class="lbl">Conjunto</div><div class="val">5 residencias</div></div>
+    </div>
+
+    <p class="pp-desc">La más nueva y de diseño más contemporáneo, dentro de un conjunto de 5 residencias con arquitectura distintiva. Es la más pequeña en construcción y terreno de las tres, y la de mayor precio por m² — aquí se paga diseño, no superficie. Confirmas que ya está lista para habitar, lo cual es una buena noticia frente al listado, que marca entrega hasta agosto 2026.</p>
+
+    <div class="pp-tags">
+      <span class="pp-tag">◈ Diseño contemporáneo</span>
+      <span class="pp-tag">◉ Alberca</span>
+      <span class="pp-tag">◦ Portón eléctrico</span>
+      <span class="pp-tag">✦ 3 recámaras</span>
+    </div>
+
+    <div class="pp-box">
+      <div class="pp-box-lbl">⚠ Verificar antes de cerrar</div>
+      <div class="pp-box-txt">El listado oficial indica entrega hasta agosto 2026; tú confirmas que ya está lista. Pide la confirmación por escrito de la fecha real de entrega. Además, al ser parte de un conjunto de 5 casas, pregunta directamente si existe reglamento interno o cuota de mantenimiento compartida — el listado no la menciona, y eso no es lo mismo que confirmar que no exista.</div>
+    </div>
+
+    <div class="pp-scores-lbl">Evaluación estratégica</div>
+    <div class="pp-score-row"><span class="name">Espacio</span><div class="bg"><div class="fill" style="width:60%"></div></div><span class="num">6.0</span></div>
+    <div class="pp-score-row"><span class="name">Valor/m²</span><div class="bg"><div class="fill" style="width:60%"></div></div><span class="num">6.0</span></div>
+    <div class="pp-score-row"><span class="name">Vida en pareja</span><div class="bg"><div class="fill" style="width:80%"></div></div><span class="num">8.0</span></div>
+    <div class="pp-score-row"><span class="name">Riesgo de cierre</span><div class="bg"><div class="fill" style="width:60%"></div></div><span class="num">6.0</span></div>
+
+    <div class="pp-verdict">
+      <div class="pp-verdict-title">Benito Juárez Nte — diseño nuevo, pero con dos cabos sueltos</div>
+      <p>La más contemporánea y con 3 recámaras, pero la más cara por m² y con dos datos que el listado no aclara: fecha real de entrega y reglamento del conjunto. Ninguno es motivo para descartarla, pero ambos deben confirmarse por escrito antes de avanzar.</p>
+    </div>
+
+    <div class="pp-footer">
+      <span>TRES65 Inmobiliaria · Damara Traconis Corres · damara@tres65inmobiliaria.com</span>
+      <span>4 / 4</span>
+    </div>
+  </section>
+
+</div>
 
 <!-- CONFIDENTIAL OVERLAY -->
 <div id="mobile-overlay">
